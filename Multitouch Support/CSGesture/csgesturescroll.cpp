@@ -68,68 +68,92 @@ bool CSGestureScroll::isScrolling(){
     if (isTouchActive)
         return true;
     
-    if (momentumscrollcurrenty > 0 || momentumscrollrest1y > 0 || momentumscrollrest2y > 0)
+    // @pqml fork change
+    // Only use one rest variable per dimension
+    if (momentumscrollcurrenty > 0 || momentumscrollresty > 0)
         return true;
     
-    if (momentumscrollcurrentx > 0 || momentumscrollrest1x > 0 || momentumscrollrest2x > 0)
+    if (momentumscrollcurrentx > 0 || momentumscrollrestx > 0)
         return true;
     
     return false;
 }
 
 void CSGestureScroll::stopScroll(){
+    // @pqml fork change
+    // Only use one rest variable per dimension
     momentumscrollcurrentx = 0;
-    momentumscrollrest1x = 0;
-    momentumscrollrest2x = 0;
+    momentumscrollrestx = 0;
     dx_history.reset();
     
     momentumscrollcurrenty = 0;
-    momentumscrollrest1y = 0;
-    momentumscrollrest2y = 0;
+    momentumscrollresty = 0;
     dy_history.reset();
     isTouchActive = false;
-    
-    // disableScrollingDelayLaunch();
 }
 
 void CSGestureScroll::scrollTimer(){
+    // @pqml fork change
+    // Change the way the momentum is computed for x
     if (momentumscrollcurrentx) {
-        int dx = momentumscrollcurrentx / 10 + momentumscrollrest2x;
-        
-        if (abs(dx) > 7) {
-            //dispatch the scroll event
-            if (inertiaScroll) {
-                _pointingWrapper->updateScroll(0, (dx / 7), 0);
-            }
-            
-            momentumscrollrest2x = dx % 1;
-            
-            momentumscrollcurrentx = momentumscrollcurrentx * momentumscrollmultiplierx + momentumscrollrest1x;
-            momentumscrollrest1x = momentumscrollcurrentx % momentumscrolldivisorx;
-            momentumscrollcurrentx /= momentumscrolldivisorx;
+        int dx = 0;
+        if (abs(momentumscrollcurrentx) >= fprecision) {
+            dx += momentumscrollcurrentx / fprecision;
         }
-        else {
+        if (abs(momentumscrollrestx) >= fprecision) {
+            dx += momentumscrollrestx / fprecision;
+            momentumscrollrestx = (momentumscrollrestx % fprecision) / 1.5;
+        }
+        
+        if (abs(momentumscrollcurrentx) > 0) {
+            if (inertiaScroll && abs(dx) > 0) _pointingWrapper->updateScroll(0, dx, 0);
+            
+            int absscroll = abs(momentumscrollcurrentx);
+            if (absscroll > (fprecision * 8)) momentumscrollcurrentx *= 0.9767;
+            else if (absscroll > (fprecision * 5)) momentumscrollcurrentx *= 0.97671;
+            else if (absscroll > (fprecision * 3)) momentumscrollcurrentx *= 0.97672;
+            else if (absscroll > (fprecision * 2)) momentumscrollcurrentx *= 0.97673;
+            else if (absscroll > (fprecision * 1)) momentumscrollcurrentx *= 0.97674;
+            else if (absscroll > (fprecision * 0.7)) momentumscrollcurrentx *= 0.97675;
+            else if (absscroll > (fprecision * 0.5)) momentumscrollcurrentx *= 0.97676;
+            else momentumscrollcurrentx *= 0.97677;
+            
+            momentumscrollrestx += momentumscrollcurrentx % fprecision;
+        } else {
             momentumscrollcurrentx = 0;
+            momentumscrollrestx = 0;
         }
     }
     
+    // @pqml fork change
+    // Change the way the momentum is computed for y
     if (momentumscrollcurrenty) {
-        int dy = momentumscrollcurrenty / 10 + momentumscrollrest2y;
-        
-        if (abs(dy) > 7) {
-            //dispatch the scroll event
-            if (inertiaScroll) {
-                _pointingWrapper->updateScroll((dy / 7), 0, 0);
-            }
-            
-            momentumscrollrest2y = dy % 1;
-            
-            momentumscrollcurrenty = momentumscrollcurrenty * momentumscrollmultipliery + momentumscrollrest1y;
-            momentumscrollrest1y = momentumscrollcurrenty % momentumscrolldivisory;
-            momentumscrollcurrenty /= momentumscrolldivisory;
+        int dy = 0;
+        if (abs(momentumscrollcurrenty) >= fprecision) {
+            dy += momentumscrollcurrenty / fprecision;
         }
-        else {
+        if (abs(momentumscrollresty) >= fprecision) {
+            dy += momentumscrollresty / fprecision;
+            momentumscrollresty = (momentumscrollresty % fprecision) / 1.5;
+        }
+        
+        if (abs(momentumscrollcurrenty) > 0) {
+            if (inertiaScroll && abs(dy) > 0) _pointingWrapper->updateScroll(dy, 0, 0);
+            
+            int absscroll = abs(momentumscrollcurrenty);
+            if (absscroll > (fprecision * 8)) momentumscrollcurrenty *= 0.9767;
+            else if (absscroll > (fprecision * 5)) momentumscrollcurrenty *= 0.97671;
+            else if (absscroll > (fprecision * 3)) momentumscrollcurrenty *= 0.97672;
+            else if (absscroll > (fprecision * 2)) momentumscrollcurrenty *= 0.97673;
+            else if (absscroll > (fprecision * 1)) momentumscrollcurrenty *= 0.97674;
+            else if (absscroll > (fprecision * 0.7)) momentumscrollcurrenty *= 0.97675;
+            else if (absscroll > (fprecision * 0.5)) momentumscrollcurrenty *= 0.97676;
+            else momentumscrollcurrenty *= 0.97677;
+            
+            momentumscrollresty += momentumscrollcurrenty % fprecision;
+        } else {
             momentumscrollcurrenty = 0;
+            momentumscrollresty = 0;
         }
     }
     
@@ -137,8 +161,10 @@ void CSGestureScroll::scrollTimer(){
         cancelDelayScroll = true;
         softc->scrollInertiaActive = true;
     }
-    
-    _scrollTimer->setTimeoutMS(10);
+
+    // @pqml fork change
+    // Chqnge scrolltimer frequency
+    _scrollTimer->setTimeoutMS(timerfreq);
 }
 
 void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
@@ -176,6 +202,16 @@ void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
         
         if (avgx == 0 && avgy == 0) {
             noScrollCounter++;
+
+            // @pqml fork change
+            // Always reset the momentum when touching the trackpad with two fingers
+            if (isTouchActive){
+                momentumscrollcurrenty = 0;
+                momentumscrollresty = 0;
+                momentumscrollcurrentx = 0;
+                momentumscrollrestx = 0;
+            }
+
             if (noScrollCounter < 3)
                 return;
         }
@@ -189,24 +225,24 @@ void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
         if (abs(avgy) > abs(avgx)) {
             _pointingWrapper->updateScroll(avgy, 0, 0);
             
-            if (!isSameSign(momentumscrollcurrenty, avgy)) {
-                momentumscrollcurrenty = 0;
-                momentumscrollrest1y = 0;
-                momentumscrollrest2y = 0;
-                dy_history.reset();
-            }
+            // @pqml fork change
+            // Only use one rest variable per dimension
+            // Always reset the momentum when touching the trackpad with two fingers
+            momentumscrollcurrenty = 0;
+            momentumscrollresty = 0;
+            if (!isSameSign(momentumscrollcurrenty, avgy)) dy_history.reset();
             
             dy_history.filter(avgy);
             dx_history.reset();
         } else {
             _pointingWrapper->updateScroll(0, avgx, 0);
             
-            if (!isSameSign(momentumscrollcurrentx, avgx)) {
-                momentumscrollcurrentx = 0;
-                momentumscrollrest1x = 0;
-                momentumscrollrest2x = 0;
-                dx_history.reset();
-            }
+            // @pqml fork change
+            // Only use one rest variable per dimension
+            // Always reset the momentum when touching the trackpad with two fingers
+            momentumscrollcurrentx = 0;
+            momentumscrollrestx = 0;
+            if (!isSameSign(momentumscrollcurrentx, avgx)) dx_history.reset();
             
             dx_history.filter(avgx);
             dy_history.reset();
@@ -215,24 +251,15 @@ void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
         isTouchActive = true;
     } else {
         if (isTouchActive){
+            // @pqml fork change
+            // Change the way the momentum is computed for x and y
             if (dx_history.count() > momentumscrollsamplesmin) {
-                int scrollx = dx_history.sum() * 10;
-                if (isSameSign(momentumscrollcurrentx, scrollx))
-                    momentumscrollcurrentx += scrollx;
-                else
-                    momentumscrollcurrentx = scrollx;
-                momentumscrollrest1x = 0;
-                momentumscrollrest2x = 0;
+                momentumscrollcurrenty = dx_history.average() * fprecision * 0.975;
+                momentumscrollrestx = 0;
             }
-            
             if (dy_history.count() > momentumscrollsamplesmin) {
-                int scrolly = dy_history.sum() * 10;
-                if (isSameSign(momentumscrollcurrenty, scrolly))
-                    momentumscrollcurrenty += scrolly;
-                else
-                    momentumscrollcurrenty = scrolly;
-                momentumscrollrest1y = 0;
-                momentumscrollrest2y = 0;
+                momentumscrollcurrenty = dy_history.average() * fprecision * 0.975;
+                momentumscrollresty = 0;
             }
             
             dx_history.reset();

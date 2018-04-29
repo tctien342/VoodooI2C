@@ -262,49 +262,8 @@ bool VoodooI2CCSGestureEngine::ProcessScroll(csgesture_softc *sc, int abovethres
         int delta_x2 = sc->x[i2] - sc->lastx[i2];
         int delta_y2 = sc->y[i2] - sc->lasty[i2];
         
-#if 0
-        if ((abs(delta_y1) + abs(delta_y2)) > (abs(delta_x1) + abs(delta_x2))) {
-            int avgy = (delta_y1 + delta_y2) / 2;
-            sc->scrolly = avgy;
-        }
-        else {
-            int avgx = (delta_x1 + delta_x2) / 2;
-            sc->scrollx = avgx;
-        }
-        
-        if (abs(sc->scrollx) > 100)
-            sc->scrollx = 0;
-        if (abs(sc->scrolly) > 100)
-            sc->scrolly = 0;
-        if (sc->scrolly > 8)
-            sc->scrolly = sc->scrolly / 8;
-        else if (sc->scrolly > 5)
-            sc->scrolly = 1;
-        else if (sc->scrolly < -8)
-            sc->scrolly = sc->scrolly / 8;
-        else if (sc->scrolly < -5)
-            sc->scrolly = -1;
-        else
-            sc->scrolly = 0;
-        
-        if (sc->scrollx > 8) {
-            sc->scrollx = sc->scrollx / 8;
-            sc->scrollx = -sc->scrollx;
-        }
-        else if (sc->scrollx > 5)
-            sc->scrollx = -1;
-        else if (sc->scrollx < -8) {
-            sc->scrollx = sc->scrollx / 8;
-            sc->scrollx = -sc->scrollx;
-        }
-        else if (sc->scrollx < -5)
-            sc->scrollx = 1;
-        else
-            sc->scrollx = 0;
-        
-        sc->scrollx = -sc->scrollx;
-        sc->scrolly = -sc->scrolly;
-#endif
+        // @pqml fork change
+        // Remove unused code
         
         int scrollx = 0;
         int scrolly = 0;
@@ -318,8 +277,10 @@ bool VoodooI2CCSGestureEngine::ProcessScroll(csgesture_softc *sc, int abovethres
             scrollx = avgx;
         }
         
-        if (abs(scrollx) < 5 && abs(scrolly) < 5 && !sc->scrollingActive)
-            return false;
+        // @pqml fork change
+        // Remove scroll activation treshold
+        //        if (abs(scrollx) < 5 && abs(scrolly) < 5 && !sc->scrollingActive)
+        //            return false;
         
         if (_scrollHandler){
             _scrollHandler->softc = sc;
@@ -367,67 +328,13 @@ bool VoodooI2CCSGestureEngine::ProcessThreeFingerSwipe(csgesture_softc *sc, int 
             _scrollHandler->softc = sc;
             _scrollHandler->stopScroll();
         }
-        int i1 = iToUse[0];
-        int delta_x1 = sc->x[i1] - sc->lastx[i1];
-        int delta_y1 = sc->y[i1] - sc->lasty[i1];
-        
-        int i2 = iToUse[1];
-        int delta_x2 = sc->x[i2] - sc->lastx[i2];
-        int delta_y2 = sc->y[i2] - sc->lasty[i2];
-        
-        int i3 = iToUse[2];
-        int delta_x3 = sc->x[i3] - sc->lastx[i3];
-        int delta_y3 = sc->y[i3] - sc->lasty[i3];
-        
-        int avgx = (delta_x1 + delta_x2 + delta_x3) / 3;
-        int avgy = (delta_y1 + delta_y2 + delta_y3) / 3;
-        
-        sc->multitaskingx += avgx;
-        sc->multitaskingy += avgy;
-        sc->multitaskinggesturetick++;
-        
-        if (sc->multitaskinggesturetick > 5 && !sc->multitaskingdone) {
-            if ((abs(delta_y1) + abs(delta_y2) + abs(delta_y3)) > (abs(delta_x1) + abs(delta_x2) + abs(delta_x3))) {
-                if (abs(sc->multitaskingy) > 50) {
-                    uint8_t shiftKeys = KBD_LCONTROL_BIT;
-                    uint8_t keyCodes[KBD_KEY_CODES] = { 0, 0, 0, 0, 0, 0 };
-                    if (sc->multitaskingy < 0)
-                        keyCodes[0] = 0x52;
-                    else
-                        keyCodes[0] = 0x51;
-                    update_keyboard(shiftKeys, keyCodes);
-                    shiftKeys = 0;
-                    keyCodes[0] = 0x0;
-                    update_keyboard(shiftKeys, keyCodes);
-                    sc->multitaskingx = 0;
-                    sc->multitaskingy = 0;
-                    sc->multitaskingdone = true;
-                }
-            }
-            else {
-                if (abs(sc->multitaskingx) > 50) {
-                    uint8_t shiftKeys = KBD_LCONTROL_BIT;
-                    uint8_t keyCodes[KBD_KEY_CODES] = { 0, 0, 0, 0, 0, 0 };
-                    if (sc->multitaskingx > 0)
-                        keyCodes[0] = 0x50;
-                    else
-                        keyCodes[0] = 0x4F;
-                    update_keyboard(shiftKeys, keyCodes);
-                    shiftKeys = 0;
-                    keyCodes[0] = 0x0;
-                    update_keyboard(shiftKeys, keyCodes);
-                    sc->multitaskingx = 0;
-                    sc->multitaskingy = 0;
-                    sc->multitaskingdone = true;
-                }
-            }
-        }
-        else if (sc->multitaskinggesturetick > 25) {
-            sc->multitaskingx = 0;
-            sc->multitaskingy = 0;
-            sc->multitaskinggesturetick = 0;
-            sc->multitaskingdone = false;
-        }
+        // @pqml fork change
+        // Remove ThreeFingerSwipe gesture.
+        // Only handle the scroll stop
+        sc->multitaskingx = 0;
+        sc->multitaskingy = 0;
+        sc->multitaskinggesturetick = 0;
+        sc->multitaskingdone = false;
         return true;
     }
     else {
@@ -441,78 +348,19 @@ bool VoodooI2CCSGestureEngine::ProcessThreeFingerSwipe(csgesture_softc *sc, int 
 
 bool VoodooI2CCSGestureEngine::ProcessFourFingerSwipe(csgesture_softc *sc, int abovethreshold, int iToUse[4]) {
     if (abovethreshold == 4) {
-        _scrollHandler->softc = sc;
-        _scrollHandler->stopScroll();
-        
-        int i1 = iToUse[0];
-        int delta_x1 = sc->x[i1] - sc->lastx[i1];
-        int delta_y1 = sc->y[i1] - sc->lasty[i1];
-        
-        int i2 = iToUse[1];
-        int delta_x2 = sc->x[i2] - sc->lastx[i2];
-        int delta_y2 = sc->y[i2] - sc->lasty[i2];
-        
-        int i3 = iToUse[2];
-        int delta_x3 = sc->x[i3] - sc->lastx[i3];
-        int delta_y3 = sc->y[i3] - sc->lasty[i3];
-        
-        int i4 = iToUse[3];
-        int delta_x4 = sc->x[i4] - sc->lastx[i4];
-        int delta_y4 = sc->y[i4] - sc->lasty[i4];
-        
-        int avgx = (delta_x1 + delta_x2 + delta_x3 + delta_x4) / 4;
-        int avgy = (delta_y1 + delta_y2 + delta_y3 + delta_y4) / 4;
-        
-        sc->multitaskingx += avgx;
-        sc->multitaskingy += avgy;
-        sc->multitaskinggesturetick++;
-        
-        if (sc->multitaskinggesturetick > 30 && !sc->multitaskingdone) {
-            if ((abs(delta_y1) + abs(delta_y2) + abs(delta_y3) + abs(delta_y4)) > (abs(delta_x1) + abs(delta_x2) + abs(delta_x3) + abs(delta_x4))) {
-                if (abs(sc->multitaskingy) > 50) {
-                    uint8_t shiftKeys = KBD_LCONTROL_BIT;
-                    uint8_t keyCodes[KBD_KEY_CODES] = { 0, 0, 0, 0, 0, 0 };
-                    if (sc->multitaskingy < 0){
-                        shiftKeys = KBD_LCONTROL_BIT;
-                        keyCodes[0] = 0x44;
-                    }else{
-                        shiftKeys = KBD_LGUI_BIT;
-                        keyCodes[0] = 0x1A;}
-                    update_keyboard(shiftKeys, keyCodes);
-                    shiftKeys = 0;
-                    keyCodes[0] = 0x0;
-                    update_keyboard(shiftKeys, keyCodes);
-                    sc->multitaskingx = 0;
-                    sc->multitaskingy = 0;
-                    sc->multitaskingdone = true;
-                }
-            }
-            else {
-                if (abs(sc->multitaskingx) > 50) {
-                    uint8_t shiftKeys = KBD_LCONTROL_BIT;
-                    uint8_t keyCodes[KBD_KEY_CODES] = { 0, 0, 0, 0, 0, 0 };
-                    if (sc->multitaskingx > 0){
-                        shiftKeys = 0;
-                        keyCodes[0] = 0x44;
-                    } else {
-                        shiftKeys = KBD_LGUI_BIT;
-                        keyCodes[0] = 0x14;}
-                    update_keyboard(shiftKeys, keyCodes);
-                    shiftKeys = 0;
-                    keyCodes[0] = 0x0;
-                    update_keyboard(shiftKeys, keyCodes);
-                    sc->multitaskingx = 0;
-                    sc->multitaskingy = 0;
-                    sc->multitaskingdone = true;
-                }
-            }
+        // @pqml fork change
+        // Add the _scrollHandler check
+        if (_scrollHandler){
+            _scrollHandler->softc = sc;
+            _scrollHandler->stopScroll();
         }
-        else if (sc->multitaskinggesturetick > 70) {
-            sc->multitaskingx = 0;
-            sc->multitaskingy = 0;
-            sc->multitaskinggesturetick = 0;
-            sc->multitaskingdone = false;
-        }
+        // @pqml fork change
+        // Remove FourFingerSwipe gesture.
+        // Only handle the scroll stop
+        sc->multitaskingx = 0;
+        sc->multitaskingy = 0;
+        sc->multitaskinggesturetick = 0;
+        sc->multitaskingdone = false;
         return true;
     }
     else {
@@ -894,11 +742,13 @@ bool VoodooI2CCSGestureEngine::start(IOService *service) {
     uint16_t max_x = interface->logical_max_x;
     uint16_t max_y = interface->logical_max_y;
     
-    uint16_t hw_res_x = 401;
-    uint16_t hw_res_y = 262;
+    // @pqml fork change
+    // Remove unused variables
     
-    sprintf(softc.product_id, "ELAN");
-    sprintf(softc.firmware_version, "0561");
+    // @pqml fork change
+    // Fix deprecated sprintf calls
+    printf(softc.product_id, "ELAN");
+    printf(softc.firmware_version, "0561");
     
     softc.resx = max_x;
     softc.resy = max_y;

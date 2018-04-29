@@ -1,57 +1,88 @@
-![release](https://img.shields.io/github/release/alexandred/VoodooI2C.svg) ![circleci](https://circleci.com/gh/alexandred/VoodooI2C.svg?style=shield&circle-token=:circle-token) [![Gitter chat](https://img.shields.io/gitter/room/nwjs/nw.js.svg?colorB=ed1965)](https://gitter.im/alexandred/VoodooI2C)
+# Better Scroll VoodooI2C
+> Fork of [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) to enhance scroll with the trackpad
 
-## What is VoodooI2C?
+<br><br>
 
-VoodooI2C is a project consisting of macOS kernel extensions that add support for I2C bus devices. The project is split into two main components: the **core** extension and various other **satellite** extensions.
+## Disclaimer
+This is a fork of the awesome [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) by [Alexandre Daoud](https://github.com/alexandred).
 
-### The Core
+Ensure that the original VoodooI2C is working on your setup before using this fork. This fork only exists for cosmetic changes.
 
-The core is the `VoodooI2C.kext` kernel extension. This kext is intended to be installed by anyone whose computer requires some form of I2C support. It consists of I2C controller drivers and is responsible for publishing device nubs to the IOService plane.
+:warning: __Please, do not post issues on the original VoodooI2C repo concerning this fork. alexandred and the contributors of VoodooI2C have nothing to do with it.__ :warning:
 
-### The Satellites
+I will not provide release of the kexts to avoid confusion with the original VoodooI2C.kext and its satellites.
 
-The satellites are a collection of various kernel extensions that implement support for a specific type of I2C device. An example of a satellite kext is `VoodooI2CHID.kext` which adds support for I2C-HID devices. Usually a user will install one satellite kext per class of I2C device.
+I made this fork especially for my Xiaomi Notebook Pro 15" (8th gen i7 and 16gb ram).
+I only tested it on my own configuration, and this plugin is provided "as is" with no guarantee. Use it at your own risk!
 
-## Current Status
+I know almost nothing about GPIO / ACPI / DSDT related issues and will not be able to provide any help for this.
 
-The following Intel I2C controllers are fully supported:
+<br><br>
 
-1. `INT33C2` and `INT33C3` - Haswell era
-2. `INT3432` and `INT3433` - Broadwell era
-3. `pci8086,9d60`, `pci8086,9d61`, `pci8086,a160` and `pci8086,a161` - Skylake/Kabylake era
+## Changes to the original VoodooI2C
 
-The following device classes are fully supported:
+> Almost all changes are located in `csgesturescroll.h` and `VoodooI2CCSGestureEngine.cpp`. They all are prefixed by a comment starting with `// @pqml fork change`.
 
-1. I2C-HID devices
-2. ELAN devices
+- Remove 3/4 fingers gestures
+  - They are a bit buggy and the key stroke emulation is sometimes in conflict with the real keyboard inputs
+- Touching the trackpad with 2 fingers stop the scroll
+- More precise deceleration of the momentum. The "linear progression" at the end of the momentum is attenuated.
+- More consistant initial momentum after the touchend
+- No more treshold for the scroll activation
+  - Little two-fingers movements on the trackpad trigger the scroll too
+- I also remove documentation and circleci from the fork
+  - I don't use CI and I only did minor changes to the VoodooI2C core, so there is no need to duplicate the doc from the original repo
 
-Note that there is sometimes an overlap between device classes. For example, some ELAN devices may also be I2C-HID devices.
+<br>
 
-## Releases
+## Setup and Build
 
-The latest version is ![release](https://img.shields.io/github/release/alexandred/VoodooI2C.svg) and can be downloaded on the [release page](https://github.com/alexandred/VoodooI2C/releases).
+### 1. Requirements
+- MacOS >= 10.11
+- Xcode Command Line Tools
+- Python 3 (for `cpplint`)
 
-## Compatibility
+###### Xcode Installation
 
-Please check the [compatibility page](https://github.com/alexandred/VoodooI2C/wiki/Compatibility) on the VoodooI2C wiki to find out if your device is compatible. If it is not on the list but you still suspect VoodooI2C may work for you, contact us on our [Gitter page](http://gitter.im/alexandred/VoodooI2C).
+```sh
+$ xcode-select --install
+```
 
-## Documentation and Troubleshooting
+###### Python Installation
 
-Please visit the [documentation site](https://voodooi2c.github.io/) for further information how to install and troubleshoot VoodooI2C. 
+- Install [brew](https://brew.sh/)
+- Use brew to install python: `brew install python`
+- Add this line to `~/.bash_profile` (and `~/.zshrc` if needed):
+  - `export PATH="/usr/local/opt/python/libexec/bin:$PATH"`
+
+
+### 2. Clone the repository
+
+```sh
+$ git https://github.com/pqml/VoodooI2C.git
+$ cd VoodooI2C
+```
+
+### 3. Initialization
+
+Use the `init.sh` script to install `cpplint`, the submodules and the 10.11 OSX SDK
+
+```sh
+$ sh init.sh
+```
+
+### 4. Build
+
+Use the `build.sh` script to build the kext into the `build` folder.
+
+```sh
+$ sh build.sh
+```
+
+You can then copy/paste the compiled `build/VoodooI2C.kext` and one of its satellites to your EFI partition or to `System/Library/Extensions` using a kext utility. 
+
+<br><br>
 
 ## License
 
 This program is protected by the GPL license. Please refer to the `LICENSE.txt` file for more information
-
-## Contributing
-
-We are looking for competent C++, OS X kernel, Linux kernel, I2C, HID etc developers to help improve this project! Here are the guidelines for contributing:
-
-* Fork this repository and clone to your local machine
-* Create a new feature branch and add commits
-* Push your feature branch to your fork
-* Submit a pull request upstream
-
-## Donations
-
-Donations can be made via Bitcoin to the following wallet: https://live.blockcypher.com/btc/address/1EUxSExh8XCveWxVDVQqnez2o95AnG8Qhr/ .

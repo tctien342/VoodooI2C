@@ -26,18 +26,24 @@ private:
     bool isTouchActive = false;
     
     int momentumscrollsamplesmin = 1;
-    
+
+    // @pqml fork change
+    // Add a "float precision" variable
+    // Add a frequency rate for the scroll timer
+    int fprecision = 100000;
+    int timerfreq = 4;
+
+    // @pqml fork change
+    // Only use one rest variable per dimension
     int momentumscrollcurrentx = 0;
     int momentumscrollmultiplierx = 98;
     int momentumscrolldivisorx = 100;
-    int momentumscrollrest1x = 0;
-    int momentumscrollrest2x = 0;
+    int momentumscrollrestx = 0;
     
     int momentumscrollcurrenty = 0;
     int momentumscrollmultipliery = 98;
     int momentumscrolldivisory = 100;
-    int momentumscrollrest1y = 0;
-    int momentumscrollrest2y = 0;
+    int momentumscrollresty = 0;
     
     bool cancelDelayScroll = false;
     
