@@ -163,7 +163,7 @@ void CSGestureScroll::scrollTimer(){
     }
 
     // @pqml fork change
-    // Chqnge scrolltimer frequency
+    // Change scrolltimer frequency
     _scrollTimer->setTimeoutMS(timerfreq);
 }
 
@@ -297,7 +297,9 @@ void CSGestureScroll::wakeFromSleep(){
     
     _scrollTimer = IOTimerEventSource::timerEventSource(this, OSMemberFunctionCast(IOTimerEventSource::Action, this, &CSGestureScroll::scrollTimer));
     _workLoop->addEventSource(_scrollTimer);
-    _scrollTimer->setTimeoutMS(10);
+    // @pqml fork change
+    // Change scrolltimer frequency
+    _scrollTimer->setTimeoutMS(timerfreq);
 }
 
 bool CSGestureScroll::start(IOService *provider){
@@ -314,7 +316,9 @@ bool CSGestureScroll::start(IOService *provider){
     
     _scrollTimer = IOTimerEventSource::timerEventSource(this, OSMemberFunctionCast(IOTimerEventSource::Action, this, &CSGestureScroll::scrollTimer));
     _workLoop->addEventSource(_scrollTimer);
-    _scrollTimer->setTimeoutMS(10);
+    // @pqml fork change
+    // Change scrolltimer frequency
+    _scrollTimer->setTimeoutMS(timerfreq);
     if (_scrollTimer)
         return true;
     return false;
