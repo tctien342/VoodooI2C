@@ -102,22 +102,12 @@ void CSGestureScroll::scrollTimer(){
         }
         if (abs(momentumscrollrestx) >= fprecision) {
             dx += momentumscrollrestx / fprecision;
-            momentumscrollrestx = (momentumscrollrestx % fprecision) / 1.5;
+            momentumscrollrestx = momentumscrollrestx % fprecision;
         }
         
         if (abs(momentumscrollcurrentx) > 0) {
             if (inertiaScroll && abs(dx) > 0) _pointingWrapper->updateScroll(0, dx, 0);
-            
-            int absscroll = abs(momentumscrollcurrentx);
-            if (absscroll > (fprecision * 8)) momentumscrollcurrentx *= 0.9767;
-            else if (absscroll > (fprecision * 5)) momentumscrollcurrentx *= 0.97671;
-            else if (absscroll > (fprecision * 3)) momentumscrollcurrentx *= 0.97672;
-            else if (absscroll > (fprecision * 2)) momentumscrollcurrentx *= 0.97673;
-            else if (absscroll > (fprecision * 1)) momentumscrollcurrentx *= 0.97674;
-            else if (absscroll > (fprecision * 0.7)) momentumscrollcurrentx *= 0.97675;
-            else if (absscroll > (fprecision * 0.5)) momentumscrollcurrentx *= 0.97676;
-            else momentumscrollcurrentx *= 0.97677;
-            
+            momentumscrollcurrentx *= 0.983;
             momentumscrollrestx += momentumscrollcurrentx % fprecision;
         } else {
             momentumscrollcurrentx = 0;
@@ -134,22 +124,13 @@ void CSGestureScroll::scrollTimer(){
         }
         if (abs(momentumscrollresty) >= fprecision) {
             dy += momentumscrollresty / fprecision;
-            momentumscrollresty = (momentumscrollresty % fprecision) / 1.5;
+            momentumscrollresty = momentumscrollresty % fprecision;
         }
         
         if (abs(momentumscrollcurrenty) > 0) {
             if (inertiaScroll && abs(dy) > 0) _pointingWrapper->updateScroll(dy, 0, 0);
-            
-            int absscroll = abs(momentumscrollcurrenty);
-            if (absscroll > (fprecision * 8)) momentumscrollcurrenty *= 0.9767;
-            else if (absscroll > (fprecision * 5)) momentumscrollcurrenty *= 0.97671;
-            else if (absscroll > (fprecision * 3)) momentumscrollcurrenty *= 0.97672;
-            else if (absscroll > (fprecision * 2)) momentumscrollcurrenty *= 0.97673;
-            else if (absscroll > (fprecision * 1)) momentumscrollcurrenty *= 0.97674;
-            else if (absscroll > (fprecision * 0.7)) momentumscrollcurrenty *= 0.97675;
-            else if (absscroll > (fprecision * 0.5)) momentumscrollcurrenty *= 0.97676;
-            else momentumscrollcurrenty *= 0.97677;
-            
+            // 0.9775
+            momentumscrollcurrenty *= 0.983;
             momentumscrollresty += momentumscrollcurrenty % fprecision;
         } else {
             momentumscrollcurrenty = 0;
@@ -254,12 +235,12 @@ void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
             // @pqml fork change
             // Change the way the momentum is computed for x and y
             if (dx_history.count() > momentumscrollsamplesmin) {
-                momentumscrollcurrenty = dx_history.average() * fprecision * 0.975;
+                momentumscrollcurrenty = dx_history.average() * fprecision;
                 momentumscrollrestx = 0;
             }
             if (dy_history.count() > momentumscrollsamplesmin) {
-                momentumscrollcurrenty = dy_history.average() * fprecision * 0.975;
-                momentumscrollresty = 0;
+                momentumscrollcurrenty = dy_history.average() * fprecision;
+                momentumscrollrestx = 0;
             }
             
             dx_history.reset();

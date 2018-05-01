@@ -30,7 +30,7 @@ private:
     // @pqml fork change
     // Add a "float precision" variable
     // Add a frequency rate for the scroll timer
-    int fprecision = 100000;
+    int fprecision = 10000000;
     int timerfreq = 4;
 
     // @pqml fork change
