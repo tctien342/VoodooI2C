@@ -235,12 +235,12 @@ void CSGestureScroll::ProcessScroll(int x1, int y1, int x2, int y2) {
             // @pqml fork change
             // Change the way the momentum is computed for x and y
             if (dx_history.count() > momentumscrollsamplesmin) {
-                momentumscrollcurrenty = dx_history.average() * fprecision;
+                momentumscrollcurrentx = dx_history.average() * fprecision;
                 momentumscrollrestx = 0;
             }
             if (dy_history.count() > momentumscrollsamplesmin) {
                 momentumscrollcurrenty = dy_history.average() * fprecision;
-                momentumscrollrestx = 0;
+                momentumscrollresty = 0;
             }
             
             dx_history.reset();
