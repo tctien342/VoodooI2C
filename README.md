@@ -44,6 +44,10 @@ I know almost nothing about GPIO / ACPI / DSDT related issues and will not be ab
 
 ###### Xcode Installation
 
+Install Xcode from the App Store
+
+You maybe need to to this:
+
 ```sh
 $ xcode-select --install
 ```
