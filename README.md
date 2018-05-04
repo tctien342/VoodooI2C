@@ -1,10 +1,12 @@
 # Better Scroll VoodooI2C
-> Fork of [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) to enhance scroll with the trackpad
+> Fork of [VoodooI2C](https://github.com/pqml/VoodooI2C) to fix some gesture for ASUS Vivobook ELAN1300
 
 <br><br>
 
 ## Disclaimer
-This is a fork of the awesome [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) by [Alexandre Daoud](https://github.com/alexandred).
+This is a fork from [VoodooI2C](https://github.com/pqml/VoodooI2C) base on awsome [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) by [Alexandre Daoud](https://github.com/alexandred).
+
+[pqml] has already fix some gesture for smoothest scroller, i just reEnable some gesture back!!
 
 Ensure that the original VoodooI2C is working on your setup before using this fork. This fork only exists for cosmetic changes.
 
@@ -12,7 +14,7 @@ Ensure that the original VoodooI2C is working on your setup before using this fo
 
 I will not provide release of the kexts to avoid confusion with the original VoodooI2C.kext and its satellites.
 
-I made this fork especially for my Xiaomi Notebook Pro 15" (8th gen i7 and 16gb ram).
+I made this fork especially for my ASUS Vivobook S15 X510UAR (8th gen i5 and 8gb ram).
 I only tested it on my own configuration, and this plugin is provided "as is" with no guarantee. Use it at your own risk!
 
 I know almost nothing about GPIO / ACPI / DSDT related issues and will not be able to provide any help for this.
@@ -21,17 +23,9 @@ I know almost nothing about GPIO / ACPI / DSDT related issues and will not be ab
 
 ## Changes to the original VoodooI2C
 
-> Almost all changes are located in `csgesturescroll.h` and `VoodooI2CCSGestureEngine.cpp`. They all are prefixed by a comment starting with `// @pqml fork change`.
+> Almost all changes are located in `VoodooI2CCSGestureEngine.cpp`.
 
-- Remove 3/4 fingers gestures
-  - They are a bit buggy and the key stroke emulation is sometimes in conflict with the real keyboard inputs
-- Touching the trackpad with 2 fingers stop the scroll
-- More precise deceleration of the momentum. The "linear progression" at the end of the momentum is attenuated.
-- More consistant initial momentum after the touchend
-- No more treshold for the scroll activation
-  - Little two-fingers movements on the trackpad trigger the scroll too
-- I also remove documentation and circleci from the fork
-  - I don't use CI and I only did minor changes to the VoodooI2C core, so there is no need to duplicate the doc from the original repo
+- ReEnable 3 finger swipe function, fix two finger tap menu
 
 <br>
 
@@ -63,7 +57,7 @@ $ xcode-select --install
 ### 2. Clone the repository
 
 ```sh
-$ git https://github.com/pqml/VoodooI2C.git
+$ git https://github.com/tctien342/VoodooI2C.git
 $ cd VoodooI2C
 ```
 
