@@ -6,7 +6,7 @@
 ## Disclaimer
 This is a fork from [VoodooI2C](https://github.com/pqml/VoodooI2C) base on awsome [VoodooI2C](https://github.com/alexandred/VoodooI2C/tree/master/VoodooI2C) by [Alexandre Daoud](https://github.com/alexandred).
 
-[pqml] has already fix some gesture for smoothest scroller, i just reEnable some gesture back!!
+[pqml](https://github.com/pqml) has already fix some gesture for smoothest scroller, i just reEnable some gesture back!!
 
 Ensure that the original VoodooI2C is working on your setup before using this fork. This fork only exists for cosmetic changes.
 
@@ -21,11 +21,25 @@ I know almost nothing about GPIO / ACPI / DSDT related issues and will not be ab
 
 <br><br>
 
-## Changes to the original VoodooI2C
+## Changes to the pqml's VoodooI2C
 
 > Almost all changes are located in `VoodooI2CCSGestureEngine.cpp`.
 
 - ReEnable 3 finger swipe function, fix two finger tap menu
+
+<br>
+
+## Changes to the original VoodooI2C
+
+> Almost all changes are located in `VoodooI2CCSGestureEngine.cpp`.
+
+- Touching the trackpad with 2 fingers stop the scroll
+- More precise deceleration of the momentum. The "linear progression" at the end of the momentum is attenuated.
+- More consistant initial momentum after the touchend
+- No more treshold for the scroll activation
+  - Little two-fingers movements on the trackpad trigger the scroll too
+- I also remove documentation and circleci from the fork
+  - I don't use CI and I only did minor changes to the VoodooI2C core, so there is no need to duplicate the doc from the original repo
 
 <br>
 
