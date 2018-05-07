@@ -21,6 +21,11 @@ I know almost nothing about GPIO / ACPI / DSDT related issues and will not be ab
 
 <br><br>
 
+## Todo
+- Add Zoom gesture (Mostly work)
+- Add Double tap with two finger to launchPad
+- Better mouse tracking
+
 ## Changes to the pqml's VoodooI2C
 
 > Almost all changes are located in `VoodooI2CCSGestureEngine.cpp`.
@@ -30,9 +35,6 @@ I know almost nothing about GPIO / ACPI / DSDT related issues and will not be ab
 <br>
 
 ## Changes to the original VoodooI2C
-
-> Almost all changes are located in `VoodooI2CCSGestureEngine.cpp`.
-
 - Touching the trackpad with 2 fingers stop the scroll
 - More precise deceleration of the momentum. The "linear progression" at the end of the momentum is attenuated.
 - More consistant initial momentum after the touchend
