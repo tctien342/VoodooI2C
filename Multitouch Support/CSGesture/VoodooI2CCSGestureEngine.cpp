@@ -322,6 +322,43 @@ bool VoodooI2CCSGestureEngine::ProcessScroll(csgesture_softc *sc, int abovethres
     return false;
 }
 
+bool VoodooI2CCSGestureEngine::ProcessTwoFingerZoom(csgesture_softc *sc, int abovethreshold, int iToUse[4]) {
+    if (abovethreshold == 2) {
+        //get position
+        int i1 = iToUse[0];
+        int i2 = iToUse[1];
+        //Space distance
+        int zoomValue = abs(sc->x[i1]-sc->x[i2]) + abs(sc->y[i1]-sc->y[i2]);
+        if (sc->zoomValue == 0 && zoomValue > 10) {
+            sc->zoomValue = zoomValue;
+            return false;
+        }
+        //When dist>200 -> active zoom
+        if (sc->zoomValue > 0){
+            if (abs(zoomValue - sc->zoomValue) > 100) sc->zooming = true;
+            if (sc->zooming && abs(zoomValue - sc->zoomValue)>20*(sc->zoomStick+1)){
+                sc->zoomStick++;
+            }
+        }
+        if (sc->zoomStick > 5){
+            uint8_t cmdKey = KBD_LGUI_BIT;
+            uint8_t keyCodes[KBD_KEY_CODES] = { 0, 0, 0, 0, 0, 0 };
+            keyCodes[0] = (zoomValue-sc->zoomValue > 0)? 0x57 : 0X56;
+            update_keyboard(cmdKey, keyCodes);
+            cmdKey = 0;
+            keyCodes[0] = 0x0;
+            update_keyboard(cmdKey, keyCodes);
+            sc->zoomValue = zoomValue;
+            sc->zoomStick = 0;
+        }
+        return sc->zooming;
+    }
+    sc->zoomStick = 0;
+    sc->zoomValue = 0;
+    sc->zooming = false;
+    return false;
+}
+
 bool VoodooI2CCSGestureEngine::ProcessThreeFingerSwipe(csgesture_softc *sc, int abovethreshold, int iToUse[4]) {
     if (abovethreshold == 3) {
         if (_scrollHandler){
@@ -567,6 +604,8 @@ void VoodooI2CCSGestureEngine::ProcessGesture(csgesture_softc *sc) {
 //        handled = ProcessFourFingerSwipe(sc, abovethreshold, iToUse);
     if (!handled)
         handled = ProcessThreeFingerSwipe(sc, abovethreshold, iToUse);
+    if (!handled && !sc->buttondown && !sc->mouseDownDueToTap)
+        handled = ProcessTwoFingerZoom(sc, abovethreshold, iToUse);
     if (!handled && !sc->buttondown && !sc->mouseDownDueToTap)
         handledByScroll = handled = ProcessScroll(sc, abovethreshold, iToUse);
     if (!handled)

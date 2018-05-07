@@ -26,7 +26,7 @@
 #include "csgesture-softc.h"
 #include "csgesturescroll.h"
 
-#define MAX_FINGERS 15
+#define MAX_FINGERS 4
 
 class VoodooI2CMultitouchInterface;
 
@@ -59,6 +59,7 @@ public:
     //public csgesture functions
     bool ProcessMove(csgesture_softc *sc, int abovethreshold, int iToUse[4]);
     bool ProcessScroll(csgesture_softc *sc, int abovethreshold, int iToUse[4]);
+    bool ProcessTwoFingerZoom(csgesture_softc *sc, int abovethreshold, int iToUse[4]);
     bool ProcessThreeFingerSwipe(csgesture_softc *sc, int abovethreshold, int iToUse[4]);
     bool ProcessFourFingerSwipe(csgesture_softc *sc, int abovethreshold, int iToUse[4]);
     

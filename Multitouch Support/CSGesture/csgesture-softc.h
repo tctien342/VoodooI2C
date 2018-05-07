@@ -82,6 +82,10 @@ struct csgesture_softc {
     int multitaskinggesturetick;
     bool multitaskingdone;
     
+    int zoomValue;
+    int zoomStick;
+    bool zooming;
+    
     int tick[15];
     int truetick[15];
     int ticksincelastrelease;
