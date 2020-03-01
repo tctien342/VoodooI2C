@@ -667,7 +667,7 @@ void VoodooI2CControllerDriver::transferMessageToBus() {
 }
 
 IOReturn VoodooI2CControllerDriver::waitBusNotBusyI2C() {
-    int timeout = TIMEOUT * 150;
+    int timeout = TIMEOUT * 150, firstDelay = 100;
 
     while (readRegister(DW_IC_STATUS) & DW_IC_STATUS_ACTIVITY) {
         if (timeout <= 0) {
@@ -676,7 +676,11 @@ IOReturn VoodooI2CControllerDriver::waitBusNotBusyI2C() {
         }
         timeout--;
 
-        IODelay(1100);
+        if (firstDelay-- >= 0) {
+            IODelay(100);
+        } else {
+            IOSleep(1);
+        }
     }
 
     return kIOReturnSuccess;
