@@ -143,7 +143,7 @@ MultitouchReturn VoodooI2CCSGestureEngine::handleInterruptReport(VoodooI2CMultit
                     if (transform & kIOFBInvertX)
 						softc.x[i] = (interface->logical_max_x / softc.factor_x) - softc.x[i];
                     if (transform & kIOFBInvertY)
-                        softc.y[i] = (interface->logical_max_y / softc.factor_y) - softc.y[i];
+						softc.y[i] = (interface->logical_max_y / softc.factor_y) - softc.y[i];
                 }
                 
                 if (transducer->tip_pressure.value())

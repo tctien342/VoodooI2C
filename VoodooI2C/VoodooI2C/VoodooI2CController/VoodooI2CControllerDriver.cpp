@@ -679,7 +679,7 @@ IOReturn VoodooI2CControllerDriver::waitBusNotBusyI2C() {
         if (firstDelay-- >= 0) {
             IODelay(100);
         } else {
-            IOSleep(1);
+            IOSleep(5);
         }
     }
 
