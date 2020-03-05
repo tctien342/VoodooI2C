@@ -44,6 +44,9 @@ Please check the [compatibility page](https://github.com/alexandred/VoodooI2C/wi
 
 Please visit the [documentation site](https://voodooi2c.github.io/) for further information how to install and troubleshoot VoodooI2C. 
 
+## Bootflags
+`-btnforceclick` Treat touchpad's button as force click
+
 ## License
 
 This program is protected by the GPL license. Please refer to the `LICENSE.txt` file for more information
