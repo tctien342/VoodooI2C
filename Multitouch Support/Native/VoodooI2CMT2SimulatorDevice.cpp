@@ -102,23 +102,23 @@ void VoodooI2CMT2SimulatorDevice::constructReportGated(VoodooI2CMultitouchEvent&
         
         SInt16 x_min = 3678;
         SInt16 y_min = 2479;
-        		
-		IOFixed scaled_x = ((IOFixed)transducer->coordinates.x.value() * MT2_MAX_X) / engine->interface->logical_max_x;
-		IOFixed scaled_y = ((IOFixed)transducer->coordinates.y.value() * MT2_MAX_Y) / engine->interface->logical_max_y;
-		
+            
+        IOFixed scaled_x = ((IOFixed)transducer->coordinates.x.value() * MT2_MAX_X) / engine->interface->logical_max_x;
+        IOFixed scaled_y = ((IOFixed)transducer->coordinates.y.value() * MT2_MAX_Y) / engine->interface->logical_max_y;
+
         if (scaled_x < 1 && scaled_y >= MT2_MAX_Y) {
             is_error_input_active = true;
         }
         
-		IOFixed scaled_old_x = ((IOFixed)transducer->coordinates.x.last.value * MT2_MAX_X) / (IOFixed)engine->interface->logical_max_x;
+        IOFixed scaled_old_x = ((IOFixed)transducer->coordinates.x.last.value * MT2_MAX_X) / (IOFixed)engine->interface->logical_max_x;
         
         uint8_t scaled_old_x_truncated = scaled_old_x;
 
         
         if (transform) {
             if (transform & kIOFBSwapAxes) {
-				scaled_x = ((IOFixed)transducer->coordinates.y.value() * MT2_MAX_X) / (IOFixed)engine->interface->logical_max_y;
-				scaled_y = ((IOFixed)transducer->coordinates.x.value() * MT2_MAX_Y) / (IOFixed)engine->interface->logical_max_x;
+                scaled_x = ((IOFixed)transducer->coordinates.y.value() * MT2_MAX_X) / (IOFixed)engine->interface->logical_max_y;
+                scaled_y = ((IOFixed)transducer->coordinates.x.value() * MT2_MAX_Y) / (IOFixed)engine->interface->logical_max_x;
             }
             
             if (transform & kIOFBInvertX) {

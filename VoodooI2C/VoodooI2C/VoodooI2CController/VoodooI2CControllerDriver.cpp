@@ -518,7 +518,7 @@ void VoodooI2CControllerDriver::stop(IOService* provider) {
 }
 
 IOReturn VoodooI2CControllerDriver::toggleBusState(VoodooI2CState enabled) {
-    int timeout = 500;
+    int timeout = 1000;
 
     do {
         writeRegister(enabled, DW_IC_ENABLE);
@@ -528,7 +528,7 @@ IOReturn VoodooI2CControllerDriver::toggleBusState(VoodooI2CState enabled) {
             return kIOReturnSuccess;
         }
 
-        IODelay(250);
+        IODelay(125);
     } while (timeout--);
 
     IOLog("%s::%s Timed out waiting for bus to change state\n", getName(), bus_device.name);
@@ -679,7 +679,7 @@ IOReturn VoodooI2CControllerDriver::waitBusNotBusyI2C() {
         if (firstDelay-- >= 0) {
             IODelay(100);
         } else {
-            IOSleep(5);
+            IOSleep(1);
         }
     }
 
