@@ -351,6 +351,7 @@
 				AC2603B11F2F294000CF238F /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		AC2603B11F2F294000CF238F /* Products */ = {
 			isa = PBXGroup;
